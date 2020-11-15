@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - FoodItem
+  - CuttingBoard
   layers:
   - Default
   - TransparentFX

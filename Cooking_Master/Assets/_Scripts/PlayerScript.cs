@@ -11,11 +11,32 @@ public class PlayerScript : MonoBehaviour
     public List<GameObject> FoodItems;
 
     public bool isPlayer1;
+    public bool pressingShift;
 
     Rigidbody2D rigidBody;
     void Awake()
     {
         rigidBody = GetComponent<Rigidbody2D>();
+    }
+
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.LeftShift) && isPlayer1)
+        {
+            pressingShift = true;
+        }
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            pressingShift = false;
+        }
+        if (Input.GetKeyDown(KeyCode.RightShift) && !isPlayer1)
+        {
+            pressingShift = true;
+        }
+        if (Input.GetKeyUp(KeyCode.RightShift) && !isPlayer1)
+        {
+            pressingShift = false;
+        }
     }
 
     void FixedUpdate()
@@ -40,14 +61,34 @@ public class PlayerScript : MonoBehaviour
     {
         if (Inventory.Count < 2)
         {
-            if (collision.gameObject.tag == "FoodItem" && Input.GetKeyDown(KeyCode.LeftShift) && isPlayer1)
+            if (collision.gameObject.tag == "FoodItem" && pressingShift)
             {
                 Debug.Log("pressing!");
+                pressingShift = false;
                 InstantiateFoodItem(collision.gameObject.name);
+                return;
             }
-            else if (collision.gameObject.tag == "FoodItem" && Input.GetKeyDown(KeyCode.RightShift) && !isPlayer1)
+        }
+
+        if (Inventory.Count > 0)
+        {
+            //runs if the player does not have items on the board that are 'ready to chop' 
+            if (collision.gameObject.tag == "CuttingBoard" && pressingShift
+                && collision.gameObject.GetComponent<ChoppingScript>().readyToChop == false)
             {
-                InstantiateFoodItem(collision.gameObject.name);
+                pressingShift = false;
+                collision.GetComponent<ChoppingScript>().AddToBoard(Inventory[0]);
+                Inventory.Remove(Inventory[0]);
+                if(Inventory.Count > 0)
+                {
+                    Inventory[0].transform.parent = gameObject.transform.GetChild(Inventory.Count - 1).gameObject.transform;
+                }
+            }
+            //runs if the player has placed a 'ready to chop' item on the chopping board
+            if (collision.gameObject.tag == "CuttingBoard" && pressingShift
+                && collision.gameObject.GetComponent<ChoppingScript>().readyToChop)
+            {
+                collision.gameObject.GetComponent<ChoppingScript>().StartChopping();
             }
         }
     }
