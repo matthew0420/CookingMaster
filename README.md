@@ -3,13 +3,13 @@
  
  ### Important information about running the game for yourself, and a list of features of the game can be found below!
  
- 
- ## Features to be included:
- 
+ ## Features currently added:
  - Static top-down view
  - "Couch Co-Op" on one keyboard!
  - Different Vegetables
  - Pick up and place previously mentioned Vegetables
+ 
+ ## Features to be included later:
  - Chop veggies
  - Veggie combinations
  - Throw your franken-salads into the trash
