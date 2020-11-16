@@ -12,6 +12,7 @@ public class PlayerScript : MonoBehaviour
 
     public bool isPlayer1;
     public bool pressingShift;
+    public bool pressingControl;
 
     Rigidbody2D rigidBody;
     void Awake()
@@ -19,6 +20,7 @@ public class PlayerScript : MonoBehaviour
         rigidBody = GetComponent<Rigidbody2D>();
     }
 
+    //USE LEFT AND RIGHT CTRL FOR CHOPPING, RIGHT AND LEFT SHIFT FOR PICKING UP
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.LeftShift) && isPlayer1)
@@ -36,6 +38,23 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.RightShift) && !isPlayer1)
         {
             pressingShift = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftControl) && isPlayer1)
+        {
+            pressingControl = true;
+        }
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            pressingControl = false;
+        }
+        if (Input.GetKeyDown(KeyCode.RightControl) && !isPlayer1)
+        {
+            pressingControl = true;
+        }
+        if (Input.GetKeyUp(KeyCode.RightControl) && !isPlayer1)
+        {
+            pressingControl = false;
         }
     }
 
@@ -82,14 +101,17 @@ public class PlayerScript : MonoBehaviour
                 if(Inventory.Count > 0)
                 {
                     Inventory[0].transform.parent = gameObject.transform.GetChild(Inventory.Count - 1).gameObject.transform;
+                    return;
                 }
             }
-            //runs if the player has placed a 'ready to chop' item on the chopping board
-            if (collision.gameObject.tag == "CuttingBoard" && pressingShift
-                && collision.gameObject.GetComponent<ChoppingScript>().readyToChop)
-            {
-                collision.gameObject.GetComponent<ChoppingScript>().StartChopping();
-            }
+        }
+
+        //runs if the player has placed a 'ready to chop' item on the chopping board
+        if (collision.gameObject.tag == "CuttingBoard" && pressingControl
+            && collision.gameObject.GetComponent<ChoppingScript>().readyToChop == true)
+        {
+            pressingControl = false;
+            collision.gameObject.GetComponent<ChoppingScript>().StartChopping();
         }
     }
 

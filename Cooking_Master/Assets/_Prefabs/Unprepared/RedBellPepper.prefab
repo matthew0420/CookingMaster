@@ -93,3 +93,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24ef768753563454bb63fbddcf400e49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UnprocessedFood: {fileID: 6523112326134509053}
+  ProcessedFood: {fileID: 2596151636872482263, guid: 18677e1d90989284eb824ad731f7b08b,
+    type: 3}
