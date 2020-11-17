@@ -13,6 +13,7 @@ public class PlayerScript : MonoBehaviour
     public bool isPlayer1;
     public bool pressingShift;
     public bool pressingControl;
+    public bool canMove = true;
 
     Rigidbody2D rigidBody;
     void Awake()
@@ -23,7 +24,16 @@ public class PlayerScript : MonoBehaviour
     //USE LEFT AND RIGHT CTRL FOR CHOPPING, RIGHT AND LEFT SHIFT FOR PICKING UP
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.LeftShift) && isPlayer1)
+        if (!canMove)
+        {
+            rigidBody.constraints = RigidbodyConstraints2D.FreezeAll;
+        } else
+        {
+            rigidBody.constraints = RigidbodyConstraints2D.None;
+            rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && isPlayer1)
         {
             pressingShift = true;
         }
@@ -55,7 +65,7 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.RightControl) && !isPlayer1)
         {
             pressingControl = false;
-        }
+        }  
     }
 
     void FixedUpdate()
@@ -65,7 +75,8 @@ public class PlayerScript : MonoBehaviour
         {
             input.x = Input.GetAxisRaw("Horizontal");
             input.y = Input.GetAxisRaw("Vertical");
-        } else
+        }
+        else
         {
             input.x = Input.GetAxisRaw("Horizontal2");
             input.y = Input.GetAxisRaw("Vertical2");
@@ -73,7 +84,7 @@ public class PlayerScript : MonoBehaviour
 
         Vector3 direction = input.normalized;
         Vector3 movement = direction * speed * Time.fixedDeltaTime;
-        rigidBody.MovePosition(transform.position + movement);
+        rigidBody.MovePosition(transform.position + movement);    
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -99,6 +110,7 @@ public class PlayerScript : MonoBehaviour
                 collision.GetComponent<ChoppingScript>().AddToBoard(Inventory[0]);
                 Inventory.Remove(Inventory[0]);
                 if(Inventory.Count > 0)
+                // && Inventory[0].gameObject.tag != "ChoppedFood"
                 {
                     Inventory[0].transform.parent = gameObject.transform.GetChild(Inventory.Count - 1).gameObject.transform;
                     return;
@@ -111,7 +123,17 @@ public class PlayerScript : MonoBehaviour
             && collision.gameObject.GetComponent<ChoppingScript>().readyToChop == true)
         {
             pressingControl = false;
-            collision.gameObject.GetComponent<ChoppingScript>().StartChopping();
+            canMove = false;
+            collision.gameObject.GetComponent<ChoppingScript>().StartChopping(this.gameObject);
+        }
+        //if itemsonboard.count is greater than 0 but ready to chop is false, this means there must be processed food on the cutting board
+        //pressing control at this point will gather all of the chopped ingredients on the board and pick them up
+        if (collision.gameObject.tag == "CuttingBoard" && pressingControl
+            && collision.gameObject.GetComponent<ChoppingScript>().readyToChop == false 
+            && collision.gameObject.GetComponent<ChoppingScript>().ItemsOnBoard.Count > 0)
+        {
+            pressingControl = false;
+            collision.gameObject.GetComponent<ChoppingScript>().PickUpChoppedFood(this.gameObject);
         }
     }
 
@@ -121,7 +143,7 @@ public class PlayerScript : MonoBehaviour
         {
             if (FoodItems[i].name == FoodToSpawn)
             {
-                var myItemToInstantiate = Instantiate(FoodItems[i].gameObject, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity); ;
+                var myItemToInstantiate = Instantiate(FoodItems[i].gameObject, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
                 myItemToInstantiate.transform.parent = gameObject.transform.GetChild(Inventory.Count).gameObject.transform;
                 myItemToInstantiate.transform.position = new Vector3(0, 0, 0);
                 myItemToInstantiate.transform.localScale = new Vector3(1.3f, 1.3f, 1.3f);

@@ -25,8 +25,10 @@
 - WASD to move
 - Left Shift to pick up food items
 - Left Control to chop ingredients on chopping boards
+- Left Control when there are only chopped ingredients on the board to pick up the contents of the board (takes up one inventory space)
 
  #### Player 2:
 - Arrow Keys to move
 - Right Shift to pick up food items
 - Right Control to chop ingredients on chopping boards
+- Right Control when there are only chopped ingredients on the board to pick up the contents of the board (takes up one inventory space)

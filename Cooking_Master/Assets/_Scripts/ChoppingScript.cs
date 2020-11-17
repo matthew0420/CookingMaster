@@ -7,7 +7,7 @@ public class ChoppingScript : MonoBehaviour
 {
     public List<GameObject> ItemsOnBoard;
 
-    private GameObject playerObject;
+    public GameObject playerObject;
     private PlayerScript playerScript;
 
     private GameObject choppingBar;
@@ -34,6 +34,7 @@ public class ChoppingScript : MonoBehaviour
         if (isChopping && choppingTimer >= maxChoppingTime)
         {
             isChopping = false;
+            playerScript.canMove = true;
             ChoppingBoardSlider.value = 0;
             choppingTimer = 0;
             if (ItemsOnBoard.Count > 0)
@@ -45,16 +46,19 @@ public class ChoppingScript : MonoBehaviour
 
     public void AddToBoard(GameObject ItemToChop)
     {
-        playerScript = ItemToChop.GetComponentInParent<PlayerScript>();
-        playerObject = ItemToChop.transform.parent.gameObject;
+        //playerScript = ItemToChop.GetComponentInParent<PlayerScript>();
+        //playerObject = ItemToChop.transform.parent.parent.gameObject;
 
         ItemToChop.transform.SetParent(this.gameObject.transform);
         ItemsOnBoard.Add(ItemToChop);
         readyToChop = true;
     }
 
-    public void StartChopping()
+    public void StartChopping(GameObject player)
     {
+        playerScript = player.GetComponent<PlayerScript>();
+        playerObject = player;
+
         readyToChop = false;
         isChopping = true;
     }
@@ -72,12 +76,24 @@ public class ChoppingScript : MonoBehaviour
 
         ItemsOnBoard.Add(myProcessedFood);
     }
-    //add a switch statement to look through names of currently placed chopping food item to turn into chopped version
-    //run a timer in fixedupdate that runs down how much time is left to chop (show progress with a status bar under the chopping board
-    //chopped version of ingredients shows up on chopping board
-    //parent all of the chopping board items together so that when one is picked up, they are all picked up as a pile of ingredients
 
-    //PLAYER SHOULD NOT BE ABLE TO MOVE WHILE CHOPPING
+    public void PickUpChoppedFood(GameObject player)
+    {
+        var choppedIngredients = new GameObject("choppedIngredients");
+        choppedIngredients.tag = "ChoppedFood";
+        choppedIngredients.AddComponent<FoodScript>();
+        choppedIngredients.transform.parent = player.transform.GetChild(player.GetComponent<PlayerScript>().Inventory.Count).gameObject.transform;
+        choppedIngredients.transform.localPosition = new Vector3(0, 0, 0);
+
+        for (int i = 0; i < ItemsOnBoard.Count; i++)
+        {
+            ItemsOnBoard[i].gameObject.transform.parent = choppedIngredients.transform;
+            ItemsOnBoard[i].gameObject.transform.position = new Vector3(0, 0, 0);
+        }
+        ItemsOnBoard.Clear();
+        player.GetComponent<PlayerScript>().Inventory.Add(choppedIngredients);
+    }
+    //check if inventory of chopping board is greater than 0 while ready to chop is false
     //IF READY TO CHOP IS FALSE (NO INGREDIENT TO BE CHOPPED AND IF A PROCESSED FOOD IS ON THE CUTTING BOARD) PRESS CTRL TO
     //PICK UP THE CONTENTS OF THE BOARD (THIS WILL RUN A LOOP AND PICK UP AND REMOVE EACH ITEM FROM THE ITEMSONBOARD LIST)
 }
