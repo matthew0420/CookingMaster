@@ -7,6 +7,8 @@ TagManager:
   - FoodItem
   - CuttingBoard
   - ChoppedFood
+  - TrashCan
+  - Plate
   layers:
   - Default
   - TransparentFX

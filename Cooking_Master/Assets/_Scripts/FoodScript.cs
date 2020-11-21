@@ -6,6 +6,7 @@ public class FoodScript : MonoBehaviour
 {
     public GameObject UnprocessedFood;
     public GameObject ProcessedFood;
+    public bool prepared;
 
     void Update()
     {

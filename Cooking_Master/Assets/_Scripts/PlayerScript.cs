@@ -21,7 +21,6 @@ public class PlayerScript : MonoBehaviour
         rigidBody = GetComponent<Rigidbody2D>();
     }
 
-    //USE LEFT AND RIGHT CTRL FOR CHOPPING, RIGHT AND LEFT SHIFT FOR PICKING UP
     void Update()
     {
         if (!canMove)
@@ -33,39 +32,45 @@ public class PlayerScript : MonoBehaviour
             rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && isPlayer1)
+        switch (isPlayer1)
         {
-            pressingShift = true;
+            case true:
+                if (Input.GetKeyDown(KeyCode.LeftShift))
+                {
+                    pressingShift = true;
+                }
+                if (Input.GetKeyUp(KeyCode.LeftShift))
+                {
+                    pressingShift = false;
+                }
+                if (Input.GetKeyDown(KeyCode.LeftControl))
+                {
+                    pressingControl = true;
+                }
+                if (Input.GetKeyUp(KeyCode.LeftControl))
+                {
+                    pressingControl = false;
+                }
+                break;
+            case false:
+                if (Input.GetKeyDown(KeyCode.RightShift))
+                {
+                    pressingShift = true;
+                }
+                if (Input.GetKeyUp(KeyCode.RightShift))
+                {
+                    pressingShift = false;
+                }
+                if (Input.GetKeyDown(KeyCode.RightControl))
+                {
+                    pressingControl = true;
+                }
+                if (Input.GetKeyUp(KeyCode.RightControl))
+                {
+                    pressingControl = false;
+                }
+                break;
         }
-        if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            pressingShift = false;
-        }
-        if (Input.GetKeyDown(KeyCode.RightShift) && !isPlayer1)
-        {
-            pressingShift = true;
-        }
-        if (Input.GetKeyUp(KeyCode.RightShift) && !isPlayer1)
-        {
-            pressingShift = false;
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftControl) && isPlayer1)
-        {
-            pressingControl = true;
-        }
-        if (Input.GetKeyUp(KeyCode.LeftControl))
-        {
-            pressingControl = false;
-        }
-        if (Input.GetKeyDown(KeyCode.RightControl) && !isPlayer1)
-        {
-            pressingControl = true;
-        }
-        if (Input.GetKeyUp(KeyCode.RightControl) && !isPlayer1)
-        {
-            pressingControl = false;
-        }  
     }
 
     void FixedUpdate()
@@ -91,7 +96,8 @@ public class PlayerScript : MonoBehaviour
     {
         if (Inventory.Count < 2)
         {
-            if (collision.gameObject.tag == "FoodItem" && pressingShift)
+            if (collision.gameObject.tag == "FoodItem" 
+                && pressingShift)
             {
                 Debug.Log("pressing!");
                 pressingShift = false;
@@ -103,14 +109,15 @@ public class PlayerScript : MonoBehaviour
         if (Inventory.Count > 0)
         {
             //runs if the player does not have items on the board that are 'ready to chop' 
-            if (collision.gameObject.tag == "CuttingBoard" && pressingShift
-                && collision.gameObject.GetComponent<ChoppingScript>().readyToChop == false)
+            if (collision.gameObject.tag == "CuttingBoard" 
+                && pressingShift
+                && collision.gameObject.GetComponent<ChoppingScript>().readyToChop == false
+                && Inventory[0].GetComponent<FoodScript>().prepared == false)
             {
                 pressingShift = false;
                 collision.GetComponent<ChoppingScript>().AddToBoard(Inventory[0]);
                 Inventory.Remove(Inventory[0]);
                 if(Inventory.Count > 0)
-                // && Inventory[0].gameObject.tag != "ChoppedFood"
                 {
                     Inventory[0].transform.parent = gameObject.transform.GetChild(Inventory.Count - 1).gameObject.transform;
                     return;
@@ -119,7 +126,8 @@ public class PlayerScript : MonoBehaviour
         }
 
         //runs if the player has placed a 'ready to chop' item on the chopping board
-        if (collision.gameObject.tag == "CuttingBoard" && pressingControl
+        if (collision.gameObject.tag == "CuttingBoard" 
+            && pressingControl
             && collision.gameObject.GetComponent<ChoppingScript>().readyToChop == true)
         {
             pressingControl = false;
@@ -128,12 +136,48 @@ public class PlayerScript : MonoBehaviour
         }
         //if itemsonboard.count is greater than 0 but ready to chop is false, this means there must be processed food on the cutting board
         //pressing control at this point will gather all of the chopped ingredients on the board and pick them up
-        if (collision.gameObject.tag == "CuttingBoard" && pressingControl
+        if (collision.gameObject.tag == "CuttingBoard" 
+            && pressingControl
             && collision.gameObject.GetComponent<ChoppingScript>().readyToChop == false 
             && collision.gameObject.GetComponent<ChoppingScript>().ItemsOnBoard.Count > 0)
         {
             pressingControl = false;
             collision.gameObject.GetComponent<ChoppingScript>().PickUpChoppedFood(this.gameObject);
+        }
+
+        if(collision.gameObject.tag == "TrashCan" 
+            && pressingShift 
+            && Inventory.Count > 0)
+        {
+            pressingShift = false;
+            Destroy(Inventory[0].gameObject);
+            Inventory.Remove(Inventory[0]);
+            if (Inventory.Count > 0)
+            {
+                Inventory[0].transform.parent = gameObject.transform.GetChild(Inventory.Count - 1).gameObject.transform;
+                return;
+            }
+        }
+
+        if (collision.gameObject.tag == "Plate" && pressingShift 
+            && Inventory[0].GetComponent<FoodScript>().prepared == false
+            && collision.gameObject.GetComponent<PlateScript>().isItemOnPlate == false)
+        {
+            pressingShift = false;
+            collision.gameObject.GetComponent<PlateScript>().AddToPlate(Inventory[0]);
+            Inventory.Remove(Inventory[0]);
+            if (Inventory.Count > 0)
+            {
+                Inventory[0].transform.parent = gameObject.transform.GetChild(Inventory.Count - 1).gameObject.transform;
+                return;
+            }
+        }
+        if (collision.gameObject.tag == "Plate" && pressingShift
+            && Inventory.Count < 2
+            && collision.gameObject.GetComponent<PlateScript>().isItemOnPlate == true)
+        {
+            pressingShift = false;
+            collision.gameObject.GetComponent<PlateScript>().RemoveFromPlate(this.gameObject);
         }
     }
 

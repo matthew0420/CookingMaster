@@ -46,9 +46,6 @@ public class ChoppingScript : MonoBehaviour
 
     public void AddToBoard(GameObject ItemToChop)
     {
-        //playerScript = ItemToChop.GetComponentInParent<PlayerScript>();
-        //playerObject = ItemToChop.transform.parent.parent.gameObject;
-
         ItemToChop.transform.SetParent(this.gameObject.transform);
         ItemsOnBoard.Add(ItemToChop);
         readyToChop = true;
@@ -69,11 +66,12 @@ public class ChoppingScript : MonoBehaviour
         myProcessedFood.transform.parent = this.gameObject.transform;
         myProcessedFood.transform.position = new Vector3(0, 0, 0);
         myProcessedFood.transform.localScale = new Vector3(1.3f, 1.8f, 1.3f);
+        myProcessedFood.GetComponent<FoodScript>().prepared = true;
 
         var OldFoodItem = ItemsOnBoard[ItemsOnBoard.Count - 1];
         ItemsOnBoard.Remove(ItemsOnBoard[ItemsOnBoard.Count - 1]);
         Destroy(OldFoodItem);
-
+        
         ItemsOnBoard.Add(myProcessedFood);
     }
 
@@ -82,8 +80,10 @@ public class ChoppingScript : MonoBehaviour
         var choppedIngredients = new GameObject("choppedIngredients");
         choppedIngredients.tag = "ChoppedFood";
         choppedIngredients.AddComponent<FoodScript>();
+        choppedIngredients.GetComponent<FoodScript>().prepared = true;
         choppedIngredients.transform.parent = player.transform.GetChild(player.GetComponent<PlayerScript>().Inventory.Count).gameObject.transform;
         choppedIngredients.transform.localPosition = new Vector3(0, 0, 0);
+
 
         for (int i = 0; i < ItemsOnBoard.Count; i++)
         {
