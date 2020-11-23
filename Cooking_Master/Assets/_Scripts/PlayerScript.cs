@@ -172,12 +172,22 @@ public class PlayerScript : MonoBehaviour
                 return;
             }
         }
-        if (collision.gameObject.tag == "Plate" && pressingShift
+        if (collision.gameObject.tag == "Plate" 
+            && pressingShift
             && Inventory.Count < 2
             && collision.gameObject.GetComponent<PlateScript>().isItemOnPlate == true)
         {
             pressingShift = false;
             collision.gameObject.GetComponent<PlateScript>().RemoveFromPlate(this.gameObject);
+        }
+
+        if(collision.gameObject.tag == "Customer" 
+            && pressingShift
+           // && Inventory.Count > 0
+           )
+        {
+            collision.gameObject.GetComponent<CustomerScript>().Die();
+            // collision.gameObject.GetComponent<CustomerScript>().RecieveOrder(Inventory[0]);
         }
     }
 
