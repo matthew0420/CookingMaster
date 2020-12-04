@@ -21,8 +21,8 @@ public class CustomerSpawner : MonoBehaviour
 
         if (CurrentTime >= TimeUntilSpawn)
         {
-            SpawnCustomer();
             CurrentTime = 0f;
+            SpawnCustomer();
         }
     }
 
@@ -34,7 +34,6 @@ public class CustomerSpawner : MonoBehaviour
             {
                 CustomerSpots.Remove(CustomerSpots[i]);
             }
-
         }
         
         //if CustomerSpots returns empty, then the spots are all full
@@ -50,5 +49,6 @@ public class CustomerSpawner : MonoBehaviour
         newCustomer.transform.parent = CustomerSpots[spotToSpawn].transform;
         newCustomer.transform.localPosition = new Vector3(0, 0.22f, 0);
         newCustomer.GetComponent<CustomerScript>().customerSpawner = this.gameObject.GetComponent<CustomerSpawner>();
+        return;
     }
 }

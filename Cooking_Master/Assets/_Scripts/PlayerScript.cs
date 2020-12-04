@@ -139,7 +139,8 @@ public class PlayerScript : MonoBehaviour
         if (collision.gameObject.tag == "CuttingBoard" 
             && pressingControl
             && collision.gameObject.GetComponent<ChoppingScript>().readyToChop == false 
-            && collision.gameObject.GetComponent<ChoppingScript>().ItemsOnBoard.Count > 0)
+            && collision.gameObject.GetComponent<ChoppingScript>().ItemsOnBoard.Count > 0
+            && collision.gameObject.GetComponent<ChoppingScript>().isChopping == false)
         {
             pressingControl = false;
             collision.gameObject.GetComponent<ChoppingScript>().PickUpChoppedFood(this.gameObject);
@@ -183,11 +184,19 @@ public class PlayerScript : MonoBehaviour
 
         if(collision.gameObject.tag == "Customer" 
             && pressingShift
-           // && Inventory.Count > 0
-           )
+            && Inventory.Count > 0
+            && Inventory[0].GetComponent<FoodScript>().prepared == true)
         {
-            collision.gameObject.GetComponent<CustomerScript>().Die();
-            // collision.gameObject.GetComponent<CustomerScript>().RecieveOrder(Inventory[0]);
+            //collision.gameObject.GetComponent<CustomerScript>().Die();
+            pressingShift = false;
+            collision.gameObject.GetComponent<CustomerScript>().RecieveOrder(Inventory[0]);
+
+            Inventory.Remove(Inventory[0]);
+            if (Inventory.Count > 0)
+            {
+                Inventory[0].transform.parent = gameObject.transform.GetChild(Inventory.Count - 1).gameObject.transform;
+                return;
+            }
         }
     }
 

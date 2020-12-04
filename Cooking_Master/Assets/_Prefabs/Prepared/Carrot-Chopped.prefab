@@ -96,3 +96,4 @@ MonoBehaviour:
   UnprocessedFood: {fileID: 6616637169397679568, guid: f3f674650daf5e647a922c4c3cfa09fc,
     type: 3}
   ProcessedFood: {fileID: 3215336375227576888}
+  prepared: 0

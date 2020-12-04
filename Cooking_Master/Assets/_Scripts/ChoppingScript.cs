@@ -67,6 +67,7 @@ public class ChoppingScript : MonoBehaviour
         myProcessedFood.transform.position = new Vector3(0, 0, 0);
         myProcessedFood.transform.localScale = new Vector3(1.3f, 1.8f, 1.3f);
         myProcessedFood.GetComponent<FoodScript>().prepared = true;
+        myProcessedFood.name = ItemToProcess.GetComponent<FoodScript>().ProcessedFood.name;
 
         var OldFoodItem = ItemsOnBoard[ItemsOnBoard.Count - 1];
         ItemsOnBoard.Remove(ItemsOnBoard[ItemsOnBoard.Count - 1]);
@@ -93,7 +94,4 @@ public class ChoppingScript : MonoBehaviour
         ItemsOnBoard.Clear();
         player.GetComponent<PlayerScript>().Inventory.Add(choppedIngredients);
     }
-    //check if inventory of chopping board is greater than 0 while ready to chop is false
-    //IF READY TO CHOP IS FALSE (NO INGREDIENT TO BE CHOPPED AND IF A PROCESSED FOOD IS ON THE CUTTING BOARD) PRESS CTRL TO
-    //PICK UP THE CONTENTS OF THE BOARD (THIS WILL RUN A LOOP AND PICK UP AND REMOVE EACH ITEM FROM THE ITEMSONBOARD LIST)
 }

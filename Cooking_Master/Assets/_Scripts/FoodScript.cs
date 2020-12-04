@@ -8,8 +8,14 @@ public class FoodScript : MonoBehaviour
     public GameObject ProcessedFood;
     public bool prepared;
 
+    public bool isServed;
+
     void Update()
     {
-        this.gameObject.transform.position = this.gameObject.transform.parent.gameObject.transform.position;
+        //when the food is served is the only time the item will not be updating its position
+        if (!isServed)
+        {
+            this.gameObject.transform.position = this.gameObject.transform.parent.gameObject.transform.position;
+        }
     }
 }

@@ -4270,3 +4270,4 @@ MonoBehaviour:
   UnprocessedFood: {fileID: 0}
   ProcessedFood: {fileID: 0}
   prepared: 0
+  isServed: 0
