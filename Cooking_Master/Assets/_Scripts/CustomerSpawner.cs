@@ -47,7 +47,7 @@ public class CustomerSpawner : MonoBehaviour
 
         var newCustomer = Instantiate(CustomerPrefab, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
         newCustomer.transform.parent = CustomerSpots[spotToSpawn].transform;
-        newCustomer.transform.localPosition = new Vector3(0, 0.22f, 0);
+        newCustomer.transform.localPosition = new Vector3(0, 0.26f, 0);
         newCustomer.GetComponent<CustomerScript>().customerSpawner = this.gameObject.GetComponent<CustomerSpawner>();
         return;
     }
