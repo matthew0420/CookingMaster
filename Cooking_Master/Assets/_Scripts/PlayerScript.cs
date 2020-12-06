@@ -189,7 +189,7 @@ public class PlayerScript : MonoBehaviour
         {
             //collision.gameObject.GetComponent<CustomerScript>().Die();
             pressingShift = false;
-            collision.gameObject.GetComponent<CustomerScript>().RecieveOrder(Inventory[0]);
+            collision.gameObject.GetComponent<CustomerScript>().RecieveOrder(Inventory[0], this.gameObject);
 
             Inventory.Remove(Inventory[0]);
             if (Inventory.Count > 0)

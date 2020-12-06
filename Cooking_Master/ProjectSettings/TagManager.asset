@@ -10,6 +10,8 @@ TagManager:
   - TrashCan
   - Plate
   - Customer
+  - MainCanvas
+  - ScoreManager
   layers:
   - Default
   - TransparentFX

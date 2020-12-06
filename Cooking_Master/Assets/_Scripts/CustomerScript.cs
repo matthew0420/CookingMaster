@@ -33,8 +33,15 @@ public class CustomerScript : MonoBehaviour
     //this list is to be cleared if the order is completed
     public List<GameObject> AngryAt;
 
+    private GameObject currentPlayer;
+
+    public ScoreScript scoreScript;
+
+    public bool outOfTimeBool;
+
     void Start()
     {
+        scoreScript = GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreScript>();
         waitTimeSlider = gameObject.GetComponentInChildren<Slider>();
         //number of ingredients desired by the customer
         var numberOfIngredients = Random.Range(2, 5);
@@ -96,13 +103,18 @@ public class CustomerScript : MonoBehaviour
         }
         else
         {
-            OutOfTime();
-            //leave angry, remove score
+            if (!outOfTimeBool)
+            {
+                outOfTimeBool = true;
+                OutOfTime();
+                //leave angry, remove score
+            }
         }
     }
 
-    public void RecieveOrder(GameObject order)
+    public void RecieveOrder(GameObject order, GameObject player)
     {
+        currentPlayer = player;
         order.GetComponent<FoodScript>().isServed = true;
         order.transform.SetParent(this.gameObject.transform);
         order.gameObject.transform.localPosition = new Vector3(0, this.gameObject.transform.localPosition.y - 0.4f, 0);
@@ -124,6 +136,10 @@ public class CustomerScript : MonoBehaviour
         if (DeliveredIngredients.Count != DesiredIngredients.Count)
         {
             //the order must be wrong, act angry!
+            if (!AngryAt.Contains(player))
+            {
+                AngryAt.Add(player);
+            }
             IncorrectOrder();
         }
         if (DeliveredIngredients.Count == DesiredIngredients.Count)
@@ -135,7 +151,7 @@ public class CustomerScript : MonoBehaviour
 
     private void CorrectOrder()
     {
-        //add score
+        scoreScript.AddScore(currentPlayer, DesiredIngredients.Count);
         this.gameObject.GetComponent<SpriteRenderer>().color = new Color32(97, 154, 60, 255);
         Invoke("CustomerLeave", 0.2f);
     }
@@ -158,6 +174,16 @@ public class CustomerScript : MonoBehaviour
     {
         this.gameObject.GetComponent<SpriteRenderer>().color = new Color32(120, 72, 72, 255);
         Debug.Log("Out of time!");
+        scoreScript.LeaveDeduction(DesiredIngredients.Count);
+        if (customerAngry)
+        {
+            foreach(GameObject player in AngryAt)
+            {
+                scoreScript.AngryLeaveDeduction(player, DesiredIngredients.Count);
+            }
+            AngryAt.Clear();
+            customerAngry = false;
+        }
         Invoke("CustomerLeave", 0.2f);
     }
 
