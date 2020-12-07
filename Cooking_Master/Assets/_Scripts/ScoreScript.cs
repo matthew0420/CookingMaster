@@ -5,19 +5,21 @@ using UnityEngine.UI;
 
 public class ScoreScript : MonoBehaviour
 {
+    public PowerUpSpawner powerUpSpawner;
+
     public GameObject player1;
     public GameObject player2;
 
     public Text Timer1;
-    private float Timer1Amount = 120f;
+    public float Timer1Amount = 120f;
     public Text Timer2;
-    private float Timer2Amount = 120f;
+    public float Timer2Amount = 120f;
 
 
     public Text Score1;
-    private int Score1Amount;
+    public int Score1Amount;
     public Text Score2;
-    private int Score2Amount;
+    public int Score2Amount;
 
     void Update()
     {
@@ -40,6 +42,11 @@ public class ScoreScript : MonoBehaviour
             Score2Amount += scoreToAdd;
             Score2.text = "Score: " + Score2Amount;
         }
+    }
+
+    public void GenerateBonus(GameObject player)
+    {
+        powerUpSpawner.SpawnPower(player);
     }
 
     public void AngryLeaveDeduction(GameObject player, int scoreToRemove)

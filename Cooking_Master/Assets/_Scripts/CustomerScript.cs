@@ -66,16 +66,16 @@ public class CustomerScript : MonoBehaviour
         switch (DesiredIngredients.Count)
         {
             case 1:
-                waitTimeSlider.maxValue = 20;
-                break;
-            case 2:
                 waitTimeSlider.maxValue = 40;
                 break;
-            case 3:
+            case 2:
                 waitTimeSlider.maxValue = 60;
                 break;
-            case 4:
+            case 3:
                 waitTimeSlider.maxValue = 80;
+                break;
+            case 4:
+                waitTimeSlider.maxValue = 100;
                 break;
             default:
                 Debug.Log("something went wrong with generating the max wait time");
@@ -146,6 +146,12 @@ public class CustomerScript : MonoBehaviour
         {
             //This order is correct!
             CorrectOrder();
+
+            //if delivery is before 70% of waiting time is up, generate bonus for player
+            if(currentWaitTime >= (maxWaitTime * 0.70f))
+            {
+                scoreScript.GenerateBonus(player);
+            }
         }
     }
 
@@ -174,15 +180,19 @@ public class CustomerScript : MonoBehaviour
     {
         this.gameObject.GetComponent<SpriteRenderer>().color = new Color32(120, 72, 72, 255);
         Debug.Log("Out of time!");
-        scoreScript.LeaveDeduction(DesiredIngredients.Count);
         if (customerAngry)
         {
             foreach(GameObject player in AngryAt)
             {
+                //only the player(s) who angered the customer lose points when they leave
                 scoreScript.AngryLeaveDeduction(player, DesiredIngredients.Count);
             }
             AngryAt.Clear();
             customerAngry = false;
+        } else
+        {
+            //both players lose points
+            scoreScript.LeaveDeduction(DesiredIngredients.Count);
         }
         Invoke("CustomerLeave", 0.2f);
     }
