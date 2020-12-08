@@ -179,6 +179,17 @@ public class PlayerScript : MonoBehaviour
             pressingShift = false;
             Destroy(Inventory[0].gameObject);
             Inventory.Remove(Inventory[0]);
+            if (this.gameObject == GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreScript>().player1)
+            {
+                GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreScript>().Score1Amount -= 2;
+                GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreScript>().Score1.text = "Score: " +
+                    GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreScript>().Score1Amount;
+            } else
+            {
+                GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreScript>().Score2Amount -= 2;
+                GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreScript>().Score2.text = "Score: " +
+                    GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreScript>().Score2Amount;
+            }
             if (Inventory.Count > 0)
             {
                 Inventory[0].transform.parent = gameObject.transform.GetChild(Inventory.Count - 1).gameObject.transform;
